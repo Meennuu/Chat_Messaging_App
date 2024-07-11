@@ -4,7 +4,6 @@ import 'package:chatmessagingapp/screens/messages/components/audio_message.dart'
 import 'package:chatmessagingapp/screens/messages/components/text_messgae.dart';
 import 'package:chatmessagingapp/screens/messages/components/video_message.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class Message extends StatelessWidget {
   const Message({
@@ -48,8 +47,43 @@ class Message extends StatelessWidget {
               width: kDefaultPadding / 2,
             )
           ],
-          messageContaint(message)
+          messageContaint(message),
+          if (message.isSender) MessageStatusDot(status: message.messageStatus)
         ],
+      ),
+    );
+  }
+}
+
+class MessageStatusDot extends StatelessWidget {
+  final MessageStatus status;
+  const MessageStatusDot({super.key, required this.status});
+
+  @override
+  Widget build(BuildContext context) {
+    Color dotColor(MessageStatus status) {
+      switch (status) {
+        case MessageStatus.not_sent:
+          return kErrorColor;
+        case MessageStatus.not_view:
+          return Theme.of(context).textTheme.bodyText1!.color!.withOpacity(0.1);
+        case MessageStatus.viewed:
+          return kPrimaryColor;
+        default:
+          return Colors.transparent;
+      }
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(left: kDefaultPadding / 2),
+      height: 12,
+      width: 12,
+      decoration:
+          BoxDecoration(color: dotColor(status), shape: BoxShape.circle),
+      child: Icon(
+        status == MessageStatus.not_sent ? Icons.close : Icons.done,
+        size: 8,
+        color: Theme.of(context).scaffoldBackgroundColor,
       ),
     );
   }
